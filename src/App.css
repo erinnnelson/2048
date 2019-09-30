@@ -2,21 +2,23 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
+.game-board {
+  margin: 0 auto;
+  width: 500px;
+  height: 500px;
+  border: 2px dashed rgba(0, 0, 0, 0.272);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.play-square {
+  border: 1px solid rgb(0, 0, 0);
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #09d3ac;
+  align-items: center;
+  margin: 1px;
+  font-size: 200%;
+  font-weight: 500;
+  user-select: none;
 }
