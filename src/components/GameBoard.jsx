@@ -55,12 +55,10 @@ export default () => {
         moveback: 'right'
       }
     }
-
   }
 
   const [playBoxes, setPlayBoxes] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(i => ({
     index: i,
-    justDoubled: false,
     val: null,
   }
   )))
@@ -90,7 +88,6 @@ export default () => {
     if (input === 37 || input === 65) {
       return 'left'
     }
-
   }
 
   const fillRandomBox = () => {
@@ -109,6 +106,7 @@ export default () => {
       console.log(direction)
       let movementPackage = movementStarter(direction)
       let newPlayBoxes = [];
+      let boxesMoved = false;
       movementPackage.start.forEach(i => {
         let copyBox = { ...playBoxes[i] }
         let firstBoxBack = { ...playBoxes[findBoxIndex(i, movementPackage.moveback, 1)] };
@@ -119,28 +117,45 @@ export default () => {
             if (firstBoxBack.val === copyBox.val) {
               copyBox.val *= 2
               firstBoxBack.val = null
+              boxesMoved = true;
             }
           } else if (secondBoxBack.val) {
             if (secondBoxBack.val === copyBox.val) {
               copyBox.val *= 2
               secondBoxBack.val = null
+              boxesMoved = true;
             }
           } else if (thirdBoxBack.val) {
             if (thirdBoxBack.val === copyBox.val) {
               copyBox.val *= 2
               thirdBoxBack.val = null
+              boxesMoved = true;
             }
           }
         } else {
           if (firstBoxBack.val) {
             copyBox.val = firstBoxBack.val;
             firstBoxBack.val = null;
+            boxesMoved = true;
+            if (secondBoxBack.val && secondBoxBack.val === copyBox.val) {
+              copyBox.val *= 2;
+              secondBoxBack.val = null;
+            } else if (thirdBoxBack.val && thirdBoxBack.val === copyBox.val) {
+              copyBox.val *= 2;
+              thirdBoxBack.val = null;
+            }
           } else if (secondBoxBack.val) {
             copyBox.val = secondBoxBack.val;
             secondBoxBack.val = null;
+            boxesMoved = true;
+            if (thirdBoxBack.val && thirdBoxBack.val === copyBox.val) {
+              copyBox.val *= 2;
+              thirdBoxBack.val = null;
+            }
           } else if (thirdBoxBack.val) {
             copyBox.val = thirdBoxBack.val;
             thirdBoxBack.val = null;
+            boxesMoved = true;
           }
         }
 
@@ -149,20 +164,28 @@ export default () => {
             if (secondBoxBack.val === firstBoxBack.val) {
               firstBoxBack.val *= 2
               secondBoxBack.val = null
+              boxesMoved = true;
             }
           } else if (thirdBoxBack.val) {
             if (thirdBoxBack.val === firstBoxBack.val) {
               firstBoxBack.val *= 2
               thirdBoxBack.val = null
+              boxesMoved = true;
             }
           }
         } else {
           if (secondBoxBack.val) {
             firstBoxBack.val = secondBoxBack.val;
             secondBoxBack.val = null;
+            boxesMoved = true;
+            if (thirdBoxBack.val && thirdBoxBack.val === firstBoxBack.val) {
+              firstBoxBack.val *= 2;
+              thirdBoxBack.val = null;
+            }
           } else if (thirdBoxBack.val) {
             firstBoxBack.val = thirdBoxBack.val;
             thirdBoxBack.val = null;
+            boxesMoved = true;
           }
         }
 
@@ -171,25 +194,29 @@ export default () => {
             if (thirdBoxBack.val === secondBoxBack.val) {
               secondBoxBack.val *= 2
               thirdBoxBack.val = null
+              boxesMoved = true;
             }
           }
         } else {
           if (thirdBoxBack.val) {
             secondBoxBack.val = thirdBoxBack.val;
             thirdBoxBack.val = null;
+            boxesMoved = true;
           }
         }
         newPlayBoxes.push(copyBox, firstBoxBack, secondBoxBack, thirdBoxBack)
-
       })
+
       newPlayBoxes.sort((a, b) => (a.index > b.index) ? 1 : -1)
 
-      const emptyBoxes = newPlayBoxes.filter(box => (
-        !box.val
-      ))
-      const random = Math.floor(Math.random() * emptyBoxes.length);
-      const randomEmptyBoxInd = emptyBoxes[random].index;
-      newPlayBoxes[randomEmptyBoxInd].val = newBoxValue()
+      if (boxesMoved) {
+        const emptyBoxes = newPlayBoxes.filter(box => (
+          !box.val
+        ))
+        const random = Math.floor(Math.random() * emptyBoxes.length);
+        const randomEmptyBoxInd = emptyBoxes[random].index;
+        newPlayBoxes[randomEmptyBoxInd].val = newBoxValue()
+      }
       setPlayBoxes(newPlayBoxes)
     }
   }
@@ -205,7 +232,6 @@ export default () => {
 
   useEffect(() => {
     fillRandomBox();
-    console.log(playBoxes)
 
   }, [])
 
@@ -217,10 +243,8 @@ export default () => {
             <p>{box.val}</p>
           </div>
         ))}
-
       </div>
       <input className='hide' autoFocus onBlur={(e) => e.target.focus()} type='submit' name='click' onKeyDown={moveBoxes} onClick={() => fillRandomBox()} />
-
     </div>
   )
 }
