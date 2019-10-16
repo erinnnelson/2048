@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Square from './Square';
 
 export default () => {
 
@@ -223,7 +224,7 @@ export default () => {
 
   const newBoxValue = () => {
     const probability = Math.random()
-    if (probability < .66) {
+    if (probability < .9) {
       return 2;
     } else {
       return 4;
@@ -239,12 +240,12 @@ export default () => {
     <div className='game-board-container'>
       <div className='game-board'>
         {playBoxes.map(box => (
-          <div className='play-square' key={box.index}>
-            <p>{box.val}</p>
-          </div>
+          <div key={box.index}>
+            <Square box={box} />
+            </div>
         ))}
       </div>
-      <input className='hide' autoFocus onBlur={(e) => e.target.focus()} type='submit' name='click' onKeyDown={moveBoxes} onClick={() => fillRandomBox()} />
+      <input className='hide' autoFocus onBlur={(e) => e.target.focus()} type='submit' name='click' onKeyDown={moveBoxes} />
     </div>
   )
 }

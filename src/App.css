@@ -13,7 +13,7 @@
 }
 
 .hide {
-  /* opacity: 0; */
+  opacity: 0;
 }
 
 .play-square {
@@ -27,4 +27,45 @@
   user-select: none;
   height: 121px;
   width: 121px;
+}
+
+.color2 {
+  background: rgb(254, 243, 218);
+}
+
+.color4 {
+  background: rgb(255, 221, 142);
+}
+
+.color8 {
+  background: rgb(255, 193, 70);
+}
+
+.color16 {
+  background: rgb(255, 165, 19);
+}
+
+.color32 {
+  background: rgb(255, 134, 74);
+}
+
+.color64 {
+  background: rgb(255, 102, 72);
+}
+
+.color128 {
+  background: rgb(255, 100, 22);
+}
+
+.color256 {
+  background: rgb(255, 65, 27);
+}
+.color512 {
+  background: rgb(255, 66, 173);
+}
+.color1024 {
+  background: rgb(255, 0, 144);
+}
+.color2048 {
+  background: rgb(211, 13, 255);
 }
