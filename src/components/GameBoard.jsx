@@ -2,57 +2,99 @@ import React, { useState, useEffect } from 'react';
 
 export default () => {
 
-  const findUp = (i) => {
-    if (i <= 3) {
-      return null;
-    } else {
-      return i - 4;
+  const findBoxIndex = (i, dir, distance) => {
+    if (dir === 'up') {
+      if (i <= (3 + (4 * (distance - 1)))) {
+        return null;
+      } else {
+        return i - (4 * distance);
+      }
+    }
+    if (dir === 'right') {
+      if (i % 4 === (3 - (distance - 1))) {
+        return null;
+      } else {
+        return i + distance;
+      }
+    }
+    if (dir === 'down') {
+      if (i >= (12 - (4 * (distance - 1)))) {
+        return null;
+      } else {
+        return i + (4 * distance);
+      }
+    }
+    if (dir === 'left') {
+      if (i % 4 === (0 + (distance - 1))) {
+        return null;
+      } else {
+        return i - distance;
+      }
     }
   }
 
-  const findRight = (i) => {
-    if (i % 4 === 3) {
-      return null;
-    } else {
-      return i + 1;
-    }
-  }
+  // const rightFindBox = (i, distance) => {
+  //   if (i % 4 === (3 - (distance - 1))) {
+  //     return null;
+  //   } else {
+  //     return i + distance;
+  //   }
+  // }
 
-  const findDown = (i) => {
+  // const downFindBox = (i, distance) => {
+  //   if (i >= (12 - (4 * (distance - 1)))) {
+  //     return null;
+  //   } else {
+  //     return i + (4 * distance);
+  //   }
+  // }
+
+  // const leftFindBox = (i, distance) => {
+  //   if (i % 4 === (0 + (distance - 1))) {
+  //     return null;
+  //   } else {
+  //     return i - distance;
+  //   }
+  // }
+
+  const findX = (i) => {
     if (i >= 12) {
-      return null;
-    } else {
-      return i + 4;
+      return 0
+    }
+    if (i >= 8 && i < 12) {
+      return 1
+    }
+    if (i >= 4 && i < 8) {
+      return 2
+    }
+    if (i >= 0 && i < 4) {
+      return 3;
     }
   }
 
-  const findLeft = (i) => {
-    if (i % 4 === 0) {
-      return null;
-    } else {
-      return i - 1;
-    }
+  const findY = (i) => {
+    return i % 4;
   }
 
   const movementStarter = (direction) => {
     if (direction === 'up') {
       return {
-        start: [4, 5, 6, 7],
+        start: [0, 1, 2, 3],
         moveback: 'down'
       }
     } else if (direction === 'right') {
       return {
-        start: [2, 6, 10, 14],
+        start: [3, 7, 11, 15],
         moveback: 'left'
       }
     } else if (direction === 'down') {
       return {
-        start: [11, 10, 9, 8],
+        start: [15, 14, 13, 12],
         moveback: 'up'
       }
     } else if (direction === 'left') {
       return {
-        start: [13, 9, 5, 1],
+        start: [12, 8, 4, 0],
         moveback: 'right'
       }
     }
@@ -61,15 +103,10 @@ export default () => {
 
   const [playBoxes, setPlayBoxes] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(i => ({
     index: i,
-    upInd: findUp(i),
-    rightInd: findRight(i),
-    downInd: findDown(i),
-    leftInd: findLeft(i),
+    // x: findX(i),
+    // y: findY(i),
+    justDoubled: false,
     val: null,
-    upVal: null,
-    rightVal: null,
-    downVal: null,
-    leftVal: null
   }
   )))
 
@@ -77,33 +114,12 @@ export default () => {
   //   return Math.floor(Math.random() * 16);
   // }
 
-  const updateBoxBoundaries = () => {
-    setPlayBoxes(prevBoxes =>
-      prevBoxes.map(box => (
-        {
-          index: box.index,
-          upInd: box.upInd,
-          rightInd: box.rightInd,
-          downInd: box.downInd,
-          leftInd: box.leftInd,
-          val: box.val,
-          upVal: (prevBoxes[findUp(box.index)] && prevBoxes[findUp(box.index)].val) || null,
-          rightVal: (prevBoxes[findRight(box.index)] && prevBoxes[findRight(box.index)].val) || null,
-          downVal: (prevBoxes[findDown(box.index)] && prevBoxes[findDown(box.index)].val) || null,
-          leftVal: (prevBoxes[findLeft(box.index)] && prevBoxes[findLeft(box.index)].val) || null
-
-        }
-      ))
-    )
-  }
-
   const fillSpecificBox = (i, val) => {
     let updatedBoxes = [...playBoxes]
     updatedBoxes[i] = { ...updatedBoxes[i], val: val }
     // console.log(i)
     // console.log(updatedBoxes)
     setPlayBoxes(updatedBoxes)
-    updateBoxBoundaries();
   }
 
 
@@ -125,10 +141,6 @@ export default () => {
       return 'left'
     }
 
-    // if (input === 'ArrowUp' || input === 'ArrowRight' || input === 'ArrowDown' || input === 'ArrowLeft') {
-    //   let direction = input.slice(5).toLowerCase();
-    //   return direction;
-    // }
   }
 
   const checkDestination = (i, direction) => {
@@ -143,63 +155,174 @@ export default () => {
     }
   }
 
-  const findMovementValue = (val, destinationIs) => {
-    if (destinationIs === 'open') {
-      return val
-    }
-    if (destinationIs === 'match') {
-      return val * 2
-    }
-  }
+  const destinationInfo = (i, direction, iRange) => {
 
-  const findMovementIndex = (i, direction, destinationIs) => {
+    let indexTwo;
+    let indexThree;
+    let indexFour;
 
-    if (destinationIs === 'match' || playBoxes[playBoxes[i][`${direction}Ind`]][`${direction}Ind`].val) {
-      return playBoxes[i][`${direction}Ind`]
-    } else if (!playBoxes[playBoxes[i][`${direction}Ind`]][`${direction}Ind`].val) {
-
-
-    }
-
-  }
-
-  const moveSpecificBox = (i, direction) => {
-      let updatedBoxes = [...playBoxes]
-      let val = findMovementValue(updatedBoxes[i].val)
-      let index = findMovementIndex(i, direction)
-      updatedBoxes[index] = { ...updatedBoxes[index], val: val }
-      updatedBoxes[i] = { ...updatedBoxes[i], val: null }
-      setPlayBoxes(updatedBoxes)
-      updateBoxBoundaries();
-
-  }
-
-  const mapAndMove = (direction) => {
-    if (direction) {
-      let movementPackage = movementStarter(direction)
-      // console.log(movePackage)
-      movementPackage.start.forEach(i => {
-        debugger;
-        if (playBoxes[i].val) {
-          moveSpecificBox(i, direction);
+    if (iRange = 1) {
+      let indexTwo = playBoxes[i][`${direction}Ind`];
+      if (playBoxes[indexTwo].val && playBoxes[i].val !== playBoxes[indexTwo].val) {
+        return {
+          index: i,
+          val: playBoxes[i].val
         }
-        if (playBoxes[playBoxes[i][`${movementPackage.moveback}Ind`]].val) {
-          moveSpecificBox(playBoxes[i][`${movementPackage.moveback}Ind`], direction)
+      }
+      if (playBoxes[indexTwo].val && playBoxes[i].val === playBoxes[indexTwo].val) {
+        return {
+          index: indexTwo,
+          val: playBoxes[i].val * 2
         }
-        // if (playBoxes[playBoxes[playBoxes[i][`${direction}Ind`]][`${direction}Ind`]].val) {
-        //   updateBoxes(playBoxes[playBoxes[i][`${direction}Ind`]][`${direction}Ind`], direction)
-        //   updateBoxes(playBoxes[i][`${direction}Ind`], direction)
-        //   updateBoxes(i, direction);
-        // }
-      })
-
+      }
+      if (playBoxes[indexTwo].val === null && playBoxes[indexTwo][`${direction}Ind`]) {
+        return {
+          index: indexTwo,
+          val: playBoxes[i].val
+        }
+      }
+    }
+    if (iRange >= 2) {
+      let indexThree = playBoxes[indexTwo][`${direction}Ind`];
+      if (playBoxes[indexThree].val && playBoxes[i].val !== playBoxes[indexThree].val) {
+        return {
+          index: indexTwo,
+          val: playBoxes[i].val
+        }
+      }
+      if (playBoxes[indexThree].val && playBoxes[i].val === playBoxes[indexThree].val) {
+        return {
+          index: indexThree,
+          val: playBoxes[i].val * 2
+        }
+      }
+      if (playBoxes[indexThree].val === null && playBoxes[indexThree][`${direction}Ind`]) {
+        return {
+          index: indexThree,
+          val: playBoxes[i].val
+        }
+      }
     }
   }
+
+
+
+
+
+
+  const moveBoxRows = (i, direction, iRange) => {
+    let destinationPackage = destinationInfo(i, direction, iRange)
+    let updatedBoxes = [...playBoxes]
+    updatedBoxes[destinationPackage.index] = { ...updatedBoxes[destinationPackage.index], val: destinationPackage.val }
+    updatedBoxes[i] = { ...updatedBoxes[i], val: null }
+    setPlayBoxes(updatedBoxes)
+
+  }
+
+  const fillRandomBox = () => {
+    const emptyBoxes = playBoxes.filter(box => (
+      !box.val
+    ))
+    const random = Math.floor(Math.random() * emptyBoxes.length);
+    const randomEmptyBoxInd = emptyBoxes[random].index;
+    fillSpecificBox(randomEmptyBoxInd, newBoxValue())
+  }
+
+
 
   const moveBoxes = (e) => {
     let input = getKeyCode(e)
     let direction = findDirection(input)
-    mapAndMove(direction)
+    if (direction) {
+      console.log(direction)
+      let movementPackage = movementStarter(direction)
+      let newPlayBoxes = [];
+      movementPackage.start.forEach(i => {
+        let copyBox = { ...playBoxes[i] }
+        // console.log(playBoxes[findBoxIndex(i, movementPackage.moveback, 3)].index)
+        let firstBoxBack = { ...playBoxes[findBoxIndex(i, movementPackage.moveback, 1)] };
+        let secondBoxBack = { ...playBoxes[findBoxIndex(i, movementPackage.moveback, 2)] };
+        let thirdBoxBack = { ...playBoxes[findBoxIndex(i, movementPackage.moveback, 3)] };
+        if (copyBox.val) {
+          if (firstBoxBack.val) {
+            if (firstBoxBack.val === copyBox.val) {
+              copyBox.val *= 2
+              firstBoxBack.val = null
+            }
+          } else if (secondBoxBack.val) {
+            if (secondBoxBack.val === copyBox.val) {
+              copyBox.val *= 2
+              secondBoxBack.val = null
+            }
+          } else if (thirdBoxBack.val) {
+            if (thirdBoxBack.val === copyBox.val) {
+              copyBox.val *= 2
+              thirdBoxBack.val = null
+            }
+          }
+        } else {
+          if (firstBoxBack.val) {
+            copyBox.val = firstBoxBack.val;
+            firstBoxBack.val = null;
+          } else if (secondBoxBack.val) {
+            copyBox.val = secondBoxBack.val;
+            secondBoxBack.val = null;
+          } else if (thirdBoxBack.val) {
+            copyBox.val = thirdBoxBack.val;
+            thirdBoxBack.val = null;
+          }
+        }
+
+        if (firstBoxBack.val) {
+          if (secondBoxBack.val) {
+            if (secondBoxBack.val === firstBoxBack.val) {
+              firstBoxBack.val *= 2
+              secondBoxBack.val = null
+            }
+          } else if (thirdBoxBack.val) {
+            if (thirdBoxBack.val === firstBoxBack.val) {
+              firstBoxBack.val *= 2
+              thirdBoxBack.val = null
+            }
+          }
+        } else {
+          if (secondBoxBack.val) {
+            firstBoxBack.val = secondBoxBack.val;
+            secondBoxBack.val = null;
+          } else if (thirdBoxBack.val) {
+            firstBoxBack.val = thirdBoxBack.val;
+            thirdBoxBack.val = null;
+          }
+        }
+
+        if (secondBoxBack.val) {
+          if (thirdBoxBack.val) {
+            if (thirdBoxBack.val === secondBoxBack.val) {
+              secondBoxBack.val *= 2
+              thirdBoxBack.val = null
+            }
+          }
+        } else {
+          if (thirdBoxBack.val) {
+            secondBoxBack.val = thirdBoxBack.val;
+            secondBoxBack.val = null;
+          }
+        }
+        newPlayBoxes.push(copyBox, firstBoxBack, secondBoxBack, thirdBoxBack)
+
+      })
+      newPlayBoxes.sort((a, b) => (a.index > b.index) ? 1 : -1)
+
+      const emptyBoxes = newPlayBoxes.filter(box => (
+        !box.val
+      ))
+      const random = Math.floor(Math.random() * emptyBoxes.length);
+      const randomEmptyBoxInd = emptyBoxes[random].index;
+      newPlayBoxes[randomEmptyBoxInd].val = newBoxValue()
+
+      setPlayBoxes(newPlayBoxes)
+
+    }
 
   }
 
@@ -214,28 +337,10 @@ export default () => {
     }
   }
 
-  const attachKeyListener = () => {
-    // document.body.addEventListener('keydown', moveBoxes);
-  }
-
-
-  const fillRandomBox = () => {
-    const emptyBoxes = playBoxes.filter(box => (
-      !box.val
-    ))
-    const random = Math.floor(Math.random() * emptyBoxes.length);
-    const randomEmptyBoxInd = emptyBoxes[random].index;
-    fillSpecificBox(randomEmptyBoxInd, newBoxValue())
-  }
-
 
   useEffect(() => {
-    // document.body.addEventListener('keydown', (e) => {
-    //   const key = e.keyCode || e.charCode || 0;
-    // });
-    updateBoxBoundaries();
     fillRandomBox();
-    attachKeyListener();
+    console.log(playBoxes)
 
 
 
