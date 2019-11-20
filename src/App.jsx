@@ -11,7 +11,6 @@ function App() {
       </header>
       <main>
         <GameBoard />
-
       </main>
     </div>
   );

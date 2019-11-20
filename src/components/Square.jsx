@@ -6,5 +6,4 @@ export default (props) => {
       <p>{props.box.val}</p>
     </div>
   )
-
 }

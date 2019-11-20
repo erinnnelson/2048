@@ -255,7 +255,7 @@ export default () => {
       </div>
       <input className='hide' autoFocus onBlur={(e) => e.target.focus()} type='submit' name='click' onKeyDown={moveBoxes} />
       <br />
-      <button onClick={startNewGame}>NEW GAME</button>
+      <button id='reset-button' onClick={startNewGame}>New Game</button>
     </div>
   )
 }
