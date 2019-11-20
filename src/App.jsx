@@ -7,14 +7,12 @@ function App() {
     <div className="App">
       <header>
         <h1>2048</h1>
+        <p>Use the arrow keys to join the numbers and get the <span>2048</span> tile!</p>
       </header>
       <main>
         <GameBoard />
 
       </main>
-      <footer>
-
-      </footer>
     </div>
   );
 }

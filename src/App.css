@@ -1,15 +1,38 @@
-.App {
+body {
+  height: 100%;
   text-align: center;
+  background: #FAF8EF;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 64px;
+}
+
+header h1, header p {
+  color: #776D65;
+}
+
+header p {
+  font-size: 18px;
+}
+
+header p span {
+  font-weight: 700;
 }
 
 .game-board {
   margin: 0 auto;
-  width: 500px;
-  height: 500px;
-  border: 2px dashed rgba(0, 0, 0, 0.272);
-
+  width: 530px;
+  height: 530px;
+  border: 6px solid #BBADA0;
+  background: #BBADA0;
+  border-radius: 5px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  justify-content: space-around;
+  align-items: center;
+
 }
 
 .hide {
@@ -17,55 +40,72 @@
 }
 
 .play-square {
-  border: 1px solid rgb(0, 0, 0);
+  /* border: 1px solid rgb(0, 0, 0); */
+  border-radius: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 1px;
+  margin: auto auto;
   font-size: 200%;
   font-weight: 500;
   user-select: none;
   height: 121px;
   width: 121px;
+  background: #CDC0B4;
+  font-size: 56px;
+  font-weight: 800;
+  color: #F9F6F2;
 }
 
 .color2 {
-  background: rgb(254, 243, 218);
+  background: #EEE3DA;
+  color: #776D65;
 }
 
 .color4 {
-  background: rgb(255, 221, 142);
+  background: #EDDFC8;
+  color: #776D65;
 }
 
 .color8 {
-  background: rgb(255, 193, 70);
+  background: #F2B179;
 }
 
 .color16 {
-  background: rgb(255, 165, 19);
+  background: #F49563;
 }
 
 .color32 {
-  background: rgb(255, 134, 74);
+  background: #F67C5F;
 }
 
 .color64 {
-  background: rgb(255, 102, 72);
+  background: #F65E3B;
 }
 
 .color128 {
-  background: rgb(255, 100, 22);
+  background: #EDCF71;
+  font-size: 48px;
 }
 
 .color256 {
-  background: rgb(255, 65, 27);
+  background: #EDCC61;
+  font-size: 48px;
 }
 .color512 {
-  background: rgb(255, 66, 173);
+  background: #EDC750;
+  font-size: 48px;
 }
 .color1024 {
-  background: rgb(255, 0, 144);
+  background: #EDC43E;
+  font-size: 42px;
 }
 .color2048 {
-  background: rgb(211, 13, 255);
+  background: #EDC22D;
+  font-size: 42px;
+}
+
+.color4069 {
+  background: #3D3833;
+  font-size: 42px
 }

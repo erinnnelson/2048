@@ -3,6 +3,21 @@ import Square from './Square';
 
 export default () => {
 
+  const [playBoxes, setPlayBoxes] = useState([])
+
+  const emptyBoxes = () => {
+    return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  }
+
+  const newBoxValue = () => {
+    const probability = Math.random()
+    if (probability < .9) {
+      return 2;
+    } else {
+      return 4;
+    }
+  }
+
   const findBoxIndex = (i, dir, distance) => {
     if (dir === 'up') {
       if (i <= (3 + (4 * (distance - 1)))) {
@@ -58,20 +73,6 @@ export default () => {
     }
   }
 
-  const [playBoxes, setPlayBoxes] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(i => ({
-    index: i,
-    val: null,
-  }
-  )))
-
-
-  const fillSpecificBox = (i, val) => {
-    let updatedBoxes = [...playBoxes]
-    updatedBoxes[i] = { ...updatedBoxes[i], val: val }
-    setPlayBoxes(updatedBoxes)
-  }
-
-
   const getKeyCode = (e) => {
     return e.keyCode || e.charCode || 0
   }
@@ -91,20 +92,27 @@ export default () => {
     }
   }
 
-  const fillRandomBox = () => {
-    const emptyBoxes = playBoxes.filter(box => (
-      !box.val
-    ))
-    const random = Math.floor(Math.random() * emptyBoxes.length);
-    const randomEmptyBoxInd = emptyBoxes[random].index;
-    fillSpecificBox(randomEmptyBoxInd, newBoxValue())
+  const getSecondBoxInd = (firstInd, emptyBoxCount) => {
+    let secondInd = Math.floor(Math.random() * emptyBoxCount);
+    if (secondInd === firstInd) {
+      secondInd = getSecondBoxInd(firstInd, emptyBoxCount);
+    }
+    return secondInd;
+
+  }
+
+  const fillTwoBoxes = (boxes) => {
+    const random1 = Math.floor(Math.random() * boxes.length);
+    const random2 = getSecondBoxInd(random1, boxes.length)
+    boxes[random1] = { index: random1, val: newBoxValue() }
+    boxes[random2] = { index: random2, val: newBoxValue() }
+    return boxes
   }
 
   const moveBoxes = (e) => {
     let input = getKeyCode(e)
     let direction = findDirection(input)
     if (direction) {
-      console.log(direction)
       let movementPackage = movementStarter(direction)
       let newPlayBoxes = [];
       let boxesMoved = false;
@@ -222,17 +230,17 @@ export default () => {
     }
   }
 
-  const newBoxValue = () => {
-    const probability = Math.random()
-    if (probability < .9) {
-      return 2;
-    } else {
-      return 4;
+  const startNewGame = () => {
+    const freshBoxes = emptyBoxes().map(i => ({
+      index: i,
+      val: null,
     }
+    ))
+    setPlayBoxes(fillTwoBoxes(freshBoxes))
   }
 
   useEffect(() => {
-    fillRandomBox();
+    startNewGame()
 
   }, [])
 
@@ -242,10 +250,12 @@ export default () => {
         {playBoxes.map(box => (
           <div key={box.index}>
             <Square box={box} />
-            </div>
+          </div>
         ))}
       </div>
       <input className='hide' autoFocus onBlur={(e) => e.target.focus()} type='submit' name='click' onKeyDown={moveBoxes} />
+      <br />
+      <button onClick={startNewGame}>NEW GAME</button>
     </div>
   )
 }
